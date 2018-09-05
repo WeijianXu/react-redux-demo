@@ -1,8 +1,9 @@
 import React from 'react';
+// import PropTypes from 'prop-types';
 
 export default class ClickCounter extends React.Component {
   /*static propTypes = {
-    name: React.PropTypes.string,
+    name: PropTypes.string,
   };*/
 
   constructor(props) {
@@ -21,17 +22,21 @@ export default class ClickCounter extends React.Component {
       // 而且使用 `++this.state.count` 的值`，可以发现此处打印值会累加，
       // 在 render 函数中 count 的值是累加后的值。
       // 【注意】：`++this.state.count` 放置在 setState 前面，并打印，结果是一样的。 
-      count: ++this.state.count,
+      // 规范的写法应该是 `this.state.count + 1`，避免此处的 count 被变更，从而产生一些错误
+      count: this.state.count + 1,
     });
     console.log(this.state.count);
   }
 
   render() {
     console.log(this.state.count);
+    const countSty = {
+      margin: '1.5em',
+    }
     return (
-      <div>
+      <div style={countSty}>
         <button onClick={this.onClickButton}>Click Me</button>
-        <div>Click Count: {this.state.count}</div>
+        <div>Click Count: <span>{this.state.count}</span></div>
       </div>
     );
   }
