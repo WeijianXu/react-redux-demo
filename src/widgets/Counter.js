@@ -27,7 +27,8 @@ export default class Counter extends React.Component {
 
   shouldComponentUpdate(nextProps, nextState) {
     // 判断新的 props、state 是否和当前的 props、state 不同，不同则返回 true，即需要渲染，否则不渲染。
-    // 在此之前，componentWillReceiveProps 函数将被调用，返回 false 之后，后续更新过程将不再进行
+    // 在此之前，componentWillReceiveProps 函数将被调用，返回 false 之后，后续 render 过程将不再进行，
+    // 此时更新过程，不包括 WillMount/DidMount 等装载阶段生命周期函数。
     return nextProps.caption !== this.props.caption || nextState.count !== this.state.count;
   }
 
@@ -52,7 +53,7 @@ export default class Counter extends React.Component {
   componentDidMount() {
     console.log(`Enter componentDidMount ${this.props.caption}`);
   }
-  
+
   onClickIncBtn() {
     this.setState({
       count: this.state.count + 1,
