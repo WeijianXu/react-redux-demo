@@ -21,6 +21,38 @@ export default class Counter extends React.Component {
     };
   }
 
+  componentWillReceiveProps(nextProps) {
+    console.log(`Enter componentWillReceiveProps ${this.props.caption}`);
+  }
+
+  shouldComponentUpdate(nextProps, nextState) {
+    // 判断新的 props、state 是否和当前的 props、state 不同，不同则返回 true，即需要渲染，否则不渲染。
+    // 在此之前，componentWillReceiveProps 函数将被调用，返回 false 之后，后续更新过程将不再进行
+    return nextProps.caption !== this.props.caption || nextState.count !== this.state.count;
+  }
+
+  componentWillMount() {
+    console.log(`Enter componentWillMount ${this.props.caption}`);
+  }
+
+  render() {
+    console.log(`Enter ${this.props.caption} render`);
+    const { caption } = this.props;
+    return (
+      <div>
+        <button onClick={this.onClickIncBtn} >+</button>
+        <button onClick={this.onClickDecBtn} >-</button>
+        <span>
+          {caption} count:<span className="countTotal">{this.state.count}</span>
+        </span>
+      </div>
+    );
+  }
+
+  componentDidMount() {
+    console.log(`Enter componentDidMount ${this.props.caption}`);
+  }
+  
   onClickIncBtn() {
     this.setState({
       count: this.state.count + 1,
@@ -38,19 +70,4 @@ export default class Counter extends React.Component {
     });
   }
 
-  render() {
-    const { caption } = this.props;
-    const countSty = {
-      margin: '1em',
-    }
-    return (
-      <div>
-        <button style={countSty} onClick={this.onClickIncBtn} >+</button>
-        <button style={countSty} onClick={this.onClickDecBtn} >-</button>
-        <span>
-          {caption} count:<span style={countSty}>{this.state.count}</span>
-        </span>
-      </div>
-    );
-  }
 }
