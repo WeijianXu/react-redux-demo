@@ -15,16 +15,35 @@ import Counter from './widgets/Counter';
  */
 export default class CounterPanel extends React.Component {
 
+  constructor(props) {
+    super(props);
+    this.onCounterUpdate = this.onCounterUpdate.bind(this);
+    this.initVals = [0, 10, 20];
+    this.state = {
+      sum: this.initVals.reduce((a, b) => a + b, 0),
+    };
+  }
+
   render() {
     console.log('Enter CounterPanel render');
     return (
       <div>
-        <Counter caption="First" />
-        <Counter caption="Second" initValue={10} />
-        <Counter caption="Third" initValue={20} />
+        <Counter caption="First" onUpdate={this.onCounterUpdate} initValue={this.initVals[0]} />
+        <Counter caption="Second" onUpdate={this.onCounterUpdate} initValue={this.initVals[1]} />
+        <Counter caption="Third" onUpdate={this.onCounterUpdate} initValue={this.initVals[2]} />
         <hr />
-        <button onClick={() => this.forceUpdate()} >Repaint</button>
+        <div>
+          <button onClick={() => this.forceUpdate()} >Repaint</button>
+          <span>Total Count: {this.state.sum}</span>
+        </div>
       </div>
     );
   }
+
+  onCounterUpdate(newCount, preCount) {
+    this.setState({
+      sum: this.state.sum + newCount - preCount, // 加上 newCount - preCount 变化的值 
+    });
+  }
+
 }

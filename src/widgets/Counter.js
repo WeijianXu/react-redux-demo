@@ -5,10 +5,12 @@ export default class Counter extends React.Component {
   static propTypes = {
     caption: PropTypes.string.isRequired,
     initValue: PropTypes.number,
+    onUpdate: PropTypes.func,
   };
 
   static defaultProps = {
     initValue: 0, // 当组件缺省该属性时，使用该默认值
+    onUpdate: f => f,
   };
 
   constructor(props) {
@@ -51,10 +53,11 @@ export default class Counter extends React.Component {
   }
 
   componentDidMount() {
+    // DidMount 周期函数需要等所有组件都渲染完毕之后，再按照 Counter 调用的先后顺序（节点数顺序）依次被调用
     console.log(`Enter componentDidMount ${this.props.caption}`);
   }
 
-  onClickIncBtn() {
+  /*onClickIncBtn() {
     this.setState({
       count: this.state.count + 1,
     });
@@ -69,6 +72,23 @@ export default class Counter extends React.Component {
     this.setState({
       count: this.state.count - 1,
     });
+  }*/
+
+  onClickIncBtn() {
+    this.updateCount(true);
+  }
+
+  onClickDecBtn() {
+    this.updateCount(false);
+  }
+
+  updateCount(isInc) {
+    const preCount = this.state.count;
+    const newCount = isInc ? preCount + 1 : preCount - 1;
+    this.setState({
+      count: newCount,
+    });
+    this.props.onUpdate(newCount, preCount);
   }
 
 }
