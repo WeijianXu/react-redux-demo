@@ -1,5 +1,7 @@
 import React from 'react';
 import PropTypes from 'prop-types';
+import CounterStore from '../stores/CounterStore';
+import * as Actions from '../Actions';
 
 export default class Counter extends React.Component {
   static propTypes = {
@@ -17,9 +19,10 @@ export default class Counter extends React.Component {
     super(props);
     this.onClickIncBtn = this.onClickIncBtn.bind(this);
     this.onClickDecBtn = this.onClickDecBtn.bind(this);
+    this.onChange = this.onChange.bind(this);
 
     this.state = {
-      count: props.initValue,
+      count: CounterStore.getCounterValues()[props.caption],
     };
   }
 
@@ -55,6 +58,11 @@ export default class Counter extends React.Component {
   componentDidMount() {
     // DidMount 周期函数需要等所有组件都渲染完毕之后，再按照 Counter 调用的先后顺序（节点数顺序）依次被调用
     console.log(`Enter componentDidMount ${this.props.caption}`);
+    CounterStore.addChangeListener(this.onChange);
+  }
+
+  componentWillUnmount() {
+    CounterStore.removeChangeListener(this.onChange);
   }
 
   /*onClickIncBtn() {
@@ -75,20 +83,28 @@ export default class Counter extends React.Component {
   }*/
 
   onClickIncBtn() {
-    this.updateCount(true);
+    // this.updateCount(true);
+    Actions.increment(this.props.caption);
   }
 
   onClickDecBtn() {
-    this.updateCount(false);
+    // this.updateCount(false);
+    Actions.decrement(this.props.caption);
   }
 
-  updateCount(isInc) {
+  /*updateCount(isInc) {
     const preCount = this.state.count;
     const newCount = isInc ? preCount + 1 : preCount - 1;
     this.setState({
       count: newCount,
     });
     this.props.onUpdate(newCount, preCount);
+  }*/
+
+  onChange() {
+    this.setState({
+      count: CounterStore.getCounterValues()[this.props.caption],
+    });
   }
 
 }
