@@ -2,7 +2,7 @@ import React from 'react';
 import PropTypes from 'prop-types';
 // import CounterStore from '../stores/CounterStore';
 import * as Actions from '../Actions';
-import store from '../Store.js';
+// import store from '../Store.js';
 
 const Counter = (props) => {
   const { caption, onIncrement, onDecrement, value } = props;
@@ -23,8 +23,25 @@ export default class CounterContainer extends React.Component {
     caption: PropTypes.string.isRequired,
   };
 
-  constructor(props) {
-    super(props);
+  /**
+   * 获取上下文中的全局 store，不在需要多处导入 store.js 
+   * @type {Object}
+   */
+  static contextTypes = {
+    store: PropTypes.object,
+  };
+
+  /**
+   * 构造函数
+   * @method constructor
+   * created by wjxu on 2018-09-10T16:57:32+0800
+   * modify by wjxu on 2018-09-10T16:57:32+0800
+   * @param  {[type]}    props   属性对象
+   * @param  {Object}    context 上下文对象，使用 contextTypes 进行 store 的传递时，必须使用到这个参数
+   */
+  constructor(props, context) {
+    // 谨慎使用 context ，因为他将改变全局的 store 状态，除非你知道你该如何利用他做的更好。
+    super(props, context);
     this.onIncrement = this.onIncrement.bind(this);
     this.onDecrement = this.onDecrement.bind(this);
     this.onChange = this.onChange.bind(this);
@@ -33,7 +50,7 @@ export default class CounterContainer extends React.Component {
   }
 
   componentWillReceiveProps(nextProps) {
-    console.log(`Enter componentWillReceiveProps ${this.props.caption}`);
+    console.log(`Enter CounterContainer componentWillReceiveProps ${this.props.caption}`);
   }
 
   shouldComponentUpdate(nextProps, nextState) {
@@ -45,25 +62,25 @@ export default class CounterContainer extends React.Component {
   }
 
   componentWillMount() {
-    console.log(`Enter componentWillMount ${this.props.caption}`);
+    console.log(`Enter CounterContainer componentWillMount ${this.props.caption}`);
   }
 
   render() {
     const { caption } = this.props;
-    console.log(`Enter ${caption} render`);
+    console.log(`Enter ${caption} CounterContainer render`);
     return <Counter caption={caption} onIncrement={this.onIncrement} onDecrement={this.onDecrement} value={this.state.value} />;
   }
 
   componentDidMount() {
     // DidMount 周期函数需要等所有组件都渲染完毕之后，再按照 Counter 调用的先后顺序（节点数顺序）依次被调用
-    console.log(`Enter componentDidMount ${this.props.caption}`);
+    console.log(`Enter CounterContainer componentDidMount ${this.props.caption}`);
     // CounterStore.addChangeListener(this.onChange);
-    store.subscribe(this.onChange);
+    this.context.store.subscribe(this.onChange);
   }
 
   componentWillUnmount() {
     // CounterStore.removeChangeListener(this.onChange);
-    store.unsubscribe(this.onChange);
+    this.context.store.unsubscribe(this.onChange);
   }
 
   /*onClickIncBtn() {
@@ -89,13 +106,13 @@ export default class CounterContainer extends React.Component {
 
     // 使用 Flux 框架时，我们在 Actions.js 中使用 Dispatcher，所以直接使用 `Actions.increment(this.props.caption);`
     // 现在我们在 Redux 中，改造了 Actions.js ，使之不依赖于 Dispatcher，而使用 store 上的全局 dispatch 函数。如下所示：
-    store.dispatch(Actions.increment(this.props.caption));
+    this.context.store.dispatch(Actions.increment(this.props.caption));
   }
 
   onDecrement() {
     // this.updateCount(false);
     // Actions.decrement(this.props.caption);
-    store.dispatch(Actions.decrement(this.props.caption));
+    this.context.store.dispatch(Actions.decrement(this.props.caption));
   }
 
   /*updateCount(isInc) {
@@ -116,7 +133,7 @@ export default class CounterContainer extends React.Component {
 
   getOwnState() {
     return {
-      value: store.getState()[this.props.caption],
+      value: this.context.store.getState()[this.props.caption],
     };
   }
 }
