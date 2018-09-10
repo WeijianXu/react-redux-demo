@@ -13,22 +13,27 @@ const getOwnState = function() {
       sum += state[k];
     }
   }
-  return {sum};
+  return {
+    value: sum
+  };
 };
 
-/**
- * 组件渲染，周期函数执行先后顺序
- *  Enter CounterPanel render
-    Enter componentWillMount First
-    Enter First render
-    Enter componentWillMount Second
-    Enter Second render
-    Enter componentWillMount Third
-    Enter Third render
-    Enter componentDidMount First
-    Enter componentDidMount Second
-    Enter componentDidMount Third
- */
+const CounterPanelContainer = (props) => {
+  const { onForceUpdate, value } = props;
+  return (
+    <div>
+      <Counter caption="First" />
+      <Counter caption="Second" />
+      <Counter caption="Third" />
+      <hr />
+      <div>
+        <button onClick={onForceUpdate} >Repaint</button>
+        <span>Total Count: {value}</span>
+      </div>
+    </div>
+  )
+}
+
 export default class CounterPanel extends React.Component {
 
   constructor(props) {
@@ -45,21 +50,9 @@ export default class CounterPanel extends React.Component {
 
   render() {
     console.log('Enter CounterPanel render');
-    return (
-      <div>
-        {/*<Counter caption="First" onUpdate={this.onCounterUpdate} initValue={this.initVals[0]} />
-        <Counter caption="Second" onUpdate={this.onCounterUpdate} initValue={this.initVals[1]} />
-        <Counter caption="Third" onUpdate={this.onCounterUpdate} initValue={this.initVals[2]} />*/}
-        <Counter caption="First" />
-        <Counter caption="Second" />
-        <Counter caption="Third" />
-        <hr />
-        <div>
-          <button onClick={() => this.forceUpdate()} >Repaint</button>
-          <span>Total Count: {this.state.sum}</span>
-        </div>
-      </div>
-    );
+    // 注意不能将 `onForceUpdate={this.forceUpdate}` 注册到 Counter 组件上，`this.forceUpdate` 函数的调用必须在本容器组件的上下文中
+    // 所以此处使用 `() => this.forceUpdate()` 注册到 Counter 组件的 onForceUpdate 属性上
+    return <CounterPanelContainer onForceUpdate={() => this.forceUpdate()} value={this.state.value} />;
   }
 
   componentDidMount() {

@@ -4,27 +4,31 @@ import PropTypes from 'prop-types';
 import * as Actions from '../Actions';
 import store from '../Store.js';
 
-export default class Counter extends React.Component {
+const Counter = (props) => {
+  const { caption, onIncrement, onDecrement, value } = props;
+  console.log(`Enter ${caption} render`);
+  return (
+    <div>
+      <button onClick={onIncrement} >+</button>
+      <button onClick={onDecrement} >-</button>
+      <span>
+        {caption} count:<span className="countTotal">{value}</span>
+      </span>
+    </div>
+  );
+};
+
+export default class CounterContainer extends React.Component {
   static propTypes = {
     caption: PropTypes.string.isRequired,
-    initValue: PropTypes.number,
-    onUpdate: PropTypes.func,
-  };
-
-  static defaultProps = {
-    initValue: 0, // 当组件缺省该属性时，使用该默认值
-    onUpdate: f => f,
   };
 
   constructor(props) {
     super(props);
-    this.onClickIncBtn = this.onClickIncBtn.bind(this);
-    this.onClickDecBtn = this.onClickDecBtn.bind(this);
+    this.onIncrement = this.onIncrement.bind(this);
+    this.onDecrement = this.onDecrement.bind(this);
     this.onChange = this.onChange.bind(this);
 
-    /*this.state = {
-      count: CounterStore.getCounterValues()[props.caption],
-    };*/
     this.state = this.getOwnState();
   }
 
@@ -36,7 +40,8 @@ export default class Counter extends React.Component {
     // 判断新的 props、state 是否和当前的 props、state 不同，不同则返回 true，即需要渲染，否则不渲染。
     // 在此之前，componentWillReceiveProps 函数将被调用，返回 false 之后，后续 render 过程将不再进行，
     // 此时更新过程，不包括 WillMount/DidMount 等装载阶段生命周期函数。
-    return nextProps.caption !== this.props.caption || nextState.count !== this.state.count;
+    // return nextProps.caption !== this.props.caption || nextState.count !== this.state.count;
+    return nextProps.caption !== this.props.caption || nextState.value !== this.state.value;
   }
 
   componentWillMount() {
@@ -44,17 +49,9 @@ export default class Counter extends React.Component {
   }
 
   render() {
-    console.log(`Enter ${this.props.caption} render`);
     const { caption } = this.props;
-    return (
-      <div>
-        <button onClick={this.onClickIncBtn} >+</button>
-        <button onClick={this.onClickDecBtn} >-</button>
-        <span>
-          {caption} count:<span className="countTotal">{this.state.count}</span>
-        </span>
-      </div>
-    );
+    console.log(`Enter ${caption} render`);
+    return <Counter caption={caption} onIncrement={this.onIncrement} onDecrement={this.onDecrement} value={this.state.value} />;
   }
 
   componentDidMount() {
@@ -86,7 +83,7 @@ export default class Counter extends React.Component {
     });
   }*/
 
-  onClickIncBtn() {
+  onIncrement() {
     // this.updateCount(true);
     // Actions.increment(this.props.caption);
 
@@ -95,7 +92,7 @@ export default class Counter extends React.Component {
     store.dispatch(Actions.increment(this.props.caption));
   }
 
-  onClickDecBtn() {
+  onDecrement() {
     // this.updateCount(false);
     // Actions.decrement(this.props.caption);
     store.dispatch(Actions.decrement(this.props.caption));
@@ -119,8 +116,7 @@ export default class Counter extends React.Component {
 
   getOwnState() {
     return {
-      count: store.getState()[this.props.caption],
+      value: store.getState()[this.props.caption],
     };
   }
-
 }
