@@ -1,7 +1,8 @@
 import React from 'react';
 import PropTypes from 'prop-types';
-import CounterStore from '../stores/CounterStore';
+// import CounterStore from '../stores/CounterStore';
 import * as Actions from '../Actions';
+import store from '../Store.js';
 
 export default class Counter extends React.Component {
   static propTypes = {
@@ -21,9 +22,10 @@ export default class Counter extends React.Component {
     this.onClickDecBtn = this.onClickDecBtn.bind(this);
     this.onChange = this.onChange.bind(this);
 
-    this.state = {
+    /*this.state = {
       count: CounterStore.getCounterValues()[props.caption],
-    };
+    };*/
+    this.state = this.getOwnState();
   }
 
   componentWillReceiveProps(nextProps) {
@@ -58,11 +60,13 @@ export default class Counter extends React.Component {
   componentDidMount() {
     // DidMount 周期函数需要等所有组件都渲染完毕之后，再按照 Counter 调用的先后顺序（节点数顺序）依次被调用
     console.log(`Enter componentDidMount ${this.props.caption}`);
-    CounterStore.addChangeListener(this.onChange);
+    // CounterStore.addChangeListener(this.onChange);
+    store.subscribe(this.onChange);
   }
 
   componentWillUnmount() {
-    CounterStore.removeChangeListener(this.onChange);
+    // CounterStore.removeChangeListener(this.onChange);
+    store.unsubscribe(this.onChange);
   }
 
   /*onClickIncBtn() {
@@ -84,12 +88,17 @@ export default class Counter extends React.Component {
 
   onClickIncBtn() {
     // this.updateCount(true);
-    Actions.increment(this.props.caption);
+    // Actions.increment(this.props.caption);
+
+    // 使用 Flux 框架时，我们在 Actions.js 中使用 Dispatcher，所以直接使用 `Actions.increment(this.props.caption);`
+    // 现在我们在 Redux 中，改造了 Actions.js ，使之不依赖于 Dispatcher，而使用 store 上的全局 dispatch 函数。如下所示：
+    store.dispatch(Actions.increment(this.props.caption));
   }
 
   onClickDecBtn() {
     // this.updateCount(false);
-    Actions.decrement(this.props.caption);
+    // Actions.decrement(this.props.caption);
+    store.dispatch(Actions.decrement(this.props.caption));
   }
 
   /*updateCount(isInc) {
@@ -102,9 +111,16 @@ export default class Counter extends React.Component {
   }*/
 
   onChange() {
-    this.setState({
+    /*this.setState({
       count: CounterStore.getCounterValues()[this.props.caption],
-    });
+    });*/
+    this.setState(this.getOwnState());
+  }
+
+  getOwnState() {
+    return {
+      count: store.getState()[this.props.caption],
+    };
   }
 
 }
