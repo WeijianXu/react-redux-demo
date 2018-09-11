@@ -3,9 +3,7 @@ import ReactDOM from 'react-dom';
 import { Provider } from 'react-redux';
 import './index.css';
 // import Provider from './Provider.js';
-import store from './Store.js';
-// import ClickCounter from './ClickCounter';
-import CounterPanel from './views/CounterPanel';
+import App from './COUNTER';
 import registerServiceWorker from './registerServiceWorker';
 
 /**
@@ -19,8 +17,8 @@ import registerServiceWorker from './registerServiceWorker';
  * 应该 react-redux 中提供的 Provider 组件 和 context.store 之间存在某些关系（尚未探究）。
  */
 ReactDOM.render(
-  (<Provider store={store} >
-    <CounterPanel />
+  (<Provider store={App.store} >
+    <App.Component />
   </Provider>), 
   document.getElementById('root'));
 registerServiceWorker();
