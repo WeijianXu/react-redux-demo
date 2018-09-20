@@ -3,7 +3,8 @@ import ReactDOM from 'react-dom';
 import { Provider } from 'react-redux';
 import './index.css';
 // import Provider from './Provider.js';
-import App from './COUNTER';
+// import App from './COUNTER/';
+import App from './TODO/';
 import registerServiceWorker from './registerServiceWorker';
 
 /**
