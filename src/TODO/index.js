@@ -3,7 +3,7 @@ import { Component as Todos } from './todo/';
 import { Component as Filter } from './filter/';
 import store from './Store.js';
 
-const Index = (props) => {
+const Index = () => {
   return (
     <div>
       <Todos />

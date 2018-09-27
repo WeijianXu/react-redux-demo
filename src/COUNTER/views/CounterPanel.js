@@ -4,6 +4,8 @@ import Counter from './Counter';
 // import store from '../Store.js';
 import Summary from './Summary.js';
 
+import './styles.less';
+
 export default class CounterPanel extends React.Component {
 
   render() {

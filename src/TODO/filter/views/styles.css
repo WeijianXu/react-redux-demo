@@ -1,0 +1,17 @@
+.filters {
+  margin-left: 1em;
+}
+.filters .filter {
+  margin-right: 0.5em;
+  padding: 4px 8px;
+}
+.filters .filter.not-selected {
+  color: blue;
+  border: solid 1px blue;
+}
+.filters .filter.selected {
+  background: grey;
+}
+.filters .filter:last-child {
+  margin-right: 0;
+}
